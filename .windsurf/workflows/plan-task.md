@@ -218,6 +218,95 @@ For multi-phase work, create the task file:
 - {enhanced feature}
 ```
 
+### Example: Authentication Feature Task File
+
+```markdown
+# Task: User Authentication Implementation
+
+**Developer:** Alice
+**Branch:** `feature/user-auth`
+**Status:** 📋 Ready
+
+---
+
+## Overview
+
+Implement JWT-based user authentication system with email/password login, token refresh, and role-based access control.
+
+---
+
+## 🔒 Task Constants Tracking
+
+| Item | Value | Established | Status |
+|------|-------|-------------|--------|
+| *Add as phases progress* | | | |
+
+---
+
+## Phases
+
+### Phase 1: Auth Models & Database
+**Goal:** Create user model, auth tables, and database migrations
+
+**Create:**
+| File | Purpose |
+|------|---------|
+| `src/models/user.py` | User model with password hashing |
+| `src/models/session.py` | Session/token storage |
+| `migrations/001_create_users.sql` | Database schema |
+
+**Success Criteria:**
+- [ ] User model with bcrypt password hashing
+- [ ] Session table with token expiry
+- [ ] Tests passing
+
+---
+
+### Phase 2: Login/Logout Endpoints
+**Goal:** Create login, logout, and token refresh API endpoints
+
+**Create:**
+| File | Purpose |
+|------|---------|
+| `src/api/auth.py` | Authentication routes |
+| `src/services/auth_service.py` | Business logic for auth |
+
+**Success Criteria:**
+- [ ] POST /login returns JWT token
+- [ ] POST /logout invalidates token
+- [ ] POST /refresh renews token
+- [ ] Tests passing
+
+---
+
+### Phase 3: Protected Routes & Middleware
+**Goal:** Implement authentication middleware and protect existing routes
+
+**Create:**
+| File | Purpose |
+|------|---------|
+| `src/middleware/auth.py` | JWT verification middleware |
+
+**Success Criteria:**
+- [ ] Middleware validates JWT tokens
+- [ ] Protected routes return 401 if unauthenticated
+- [ ] Integration tests covering auth flow
+- [ ] Tests passing
+
+---
+
+## Success Criteria (Overall)
+
+**Must Have:**
+- Secure password storage (bcrypt)
+- JWT token generation and validation
+- Protected routes with middleware
+
+**Should Have:**
+- Token refresh mechanism
+- Password reset functionality
+```
+
 ### After Creating Task File
 
 1. Update `dev_context.md`:

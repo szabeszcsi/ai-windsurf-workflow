@@ -173,7 +173,7 @@ else:
 
 **Example: Adding JavaScript support**
 
-#### 1. Create Full Standard
+### 1. Create Full Standard
 
 File: `.ai/standards/javascript.md`
 
@@ -207,7 +207,7 @@ File: `.ai/standards/javascript.md`
 
 **Size target:** ~250+ lines with examples
 
-#### 2. Create Condensed Rule
+### 2. Create Condensed Rule
 
 File: `.windsurf/rules/javascript-code.md`
 
@@ -250,7 +250,7 @@ description: JavaScript coding standards
 **Full reference:** `.ai/standards/javascript.md`
 ```
 
-#### 3. Update Core Rules
+### 3. Update Core Rules
 
 Add to `.windsurf/rules/core-rules.md` in "Load On Demand" section:
 
@@ -258,13 +258,13 @@ Add to `.windsurf/rules/core-rules.md` in "Load On Demand" section:
 | Writing JavaScript | `.ai/standards/javascript.md` |
 ```
 
-#### 4. Update Templates (Optional)
+### 4. Update Templates (Optional)
 
 Templates already use `{language}` placeholder, so usually no changes needed.
 
 Only update if adding language-specific sections.
 
-#### 5. Test
+### 5. Test
 
 1. Create a `.js` file in the project
 2. Verify auto-load of `javascript-code.md`
@@ -292,6 +292,14 @@ Is it a JavaScript file?
     ↓
 (Add more language patterns as needed)
 ```
+
+**Edge Case: conftest.py**
+
+Test configuration files like `conftest.py` (pytest) or `test_helper.py`:
+- **Trigger:** Only `python-code.md` (not `python-tests.md`)
+- **Reason:** Filename doesn't match `test_*.py` or `*_test.py` pattern
+- **Behavior:** Treated as regular Python file, which is correct
+- **Note:** If you need test-specific guidance for conftest.py, reference `.ai/standards/testing.md` manually
 
 ```
 AI needs detailed information
