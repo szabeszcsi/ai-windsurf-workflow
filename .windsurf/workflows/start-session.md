@@ -1,143 +1,143 @@
 ---
 name: start-session
-description: Initialize session with checkpoint verification, context loading, and task selection. Usage: /start-session
+description: Initialize new chat session. Run at the start of every conversation.
 auto_execution_mode: 0
 ---
 
-# Start Session Workflow
+# Start Session
 
-Full protocol for initializing a new chat session.
+Run this workflow at the beginning of every new chat.
 
 ---
 
-## Step 1: Checkpoint Integrity Check (MANDATORY)
+## Step 1: Checkpoint Integrity
 
-**Be honest with yourself:**
+Before anything else, honestly assess:
 
 | Situation | Action |
 |-----------|--------|
 | Direct memory of this session | ✅ Continue to Step 2 |
-| Started from checkpoint/summary | 🚨 **DISCLOSE TO USER** → Recommend fresh start |
-| Uncertain about state | Ask user to clarify, recommend `/check-status` |
+| Started from checkpoint/summary | 🚨 **DISCLOSE** → Tell user, recommend fresh start |
+| Uncertain about state | Ask user to clarify |
 
-**If checkpoint-only → HARD STOP.** Tell user and recommend starting fresh.
-
----
-
-## Step 2: Load Context
-
-Read these files from project root:
-1. `dev_context.md` - Current state, active task, lingering items
-2. `PROJECT_STATUS.md` - Project-wide status and overview
-3. `SOLUTION_ARCHITECTURE.md` - Project structure (if exists)
-
-**If Task Constants section exists in dev_context.md:**
-- These are SACRED - do not modify files/signatures listed there
-- If it references an external file, load that too
+**If checkpoint-only → STOP.** Do not pretend to have context you don't have.
 
 ---
 
-## Step 3: Verify Branch
+## Step 2: Identify Developer
+
+**Check if `.windsurf/team.md` exists:**
+
+### Multi-developer project (team.md exists):
+
+Ask:
+```
+🚨 WHO ARE YOU?
+```
+
+Then load their context file from the mapping:
+
+| Developer | Context File |
+|-----------|--------------|
+| {Name 1} | dev1_context.md |
+| {Name 2} | dev2_context.md |
+| ... | ... |
+
+### Single-developer project (no team.md):
+
+Use `dev_context.md` directly.
+
+---
+
+## Step 3: Load Context
+
+Read these files in order:
+
+```
+1. {dev_context_file}      → Current state, active task, Task Constants
+2. PROJECT_STATUS.md       → Project overview (if exists)
+3. SOLUTION_ARCHITECTURE.md → Project structure (if exists)
+```
+
+**If context file references external files (e.g., `docs/working/{task}_constants.md`), load those too.**
+
+---
+
+## Step 4: Verify Branch
 
 ```bash
 git branch --show-current
 git status --short
 ```
 
-Warn if branch doesn't match what's in `dev_context.md`.
-
----
-
-## Step 4: Request Context Baseline
-
-Ask user:
-```
-Please run `/context` and share the percentage so I can establish a baseline.
-```
-
-This helps track context health throughout the session.
+⚠️ Warn if branch doesn't match `dev_context.md`.
 
 ---
 
 ## Step 5: Present Work Options
 
-Show available work based on context:
+Based on loaded context, show:
 
 ```
 👤 {Name} | 🌿 {branch}
 
-📋 WHAT SHALL WE WORK ON?
+📋 AVAILABLE WORK:
 
-🎯 PRIMARY: {Phase N - Task Name}
-   └─ {brief status}
+🎯 PRIMARY: {Task Name} - Phase {N}
+   Status: {X}% | Next: {next step}
 
 🔥 LINGERING ({count}):
-   1. {Bug/Issue name} - {priority}
-   2. {Investigation} - {priority}
+   1. {Issue} - {priority}
+   2. {Issue} - {priority}
 
-🆕 NEW: Describe something else
+🆕 NEW: Describe a new task
 
-Pick: [P=Primary] [1-N=Lingering] [N=New task]
+Pick: [P] Primary | [1-N] Lingering | [N] New
 ```
 
 ---
 
 ## Step 6: Handle Selection
 
-### If PRIMARY selected:
-- Load handoff: `docs/tasks/{component}_phase{N}_handoff.md`
-- Continue phase work
+### PRIMARY selected:
+1. Load handoff: `docs/tasks/{component}_phase{N}_handoff.md`
+2. Review Task Constants (🔒 DO NOT MODIFY these)
+3. Continue phase work
 
-### If LINGERING selected:
-- Load relevant session doc from `docs/working/`
-- Continue ad-hoc work
+### LINGERING selected:
+1. Load session doc from `docs/working/` if exists
+2. Continue ad-hoc work
 
-### If NEW task:
-- Ask: "Is this urgent (do now) or should we create a task file first?"
-- **Urgent:** Add to Lingering in context, start work
-- **Planned:** Create task file using template
+### NEW task:
+Ask: *"Is this urgent (start now) or planned (create task file first)?"*
+
+| Answer | Action |
+|--------|--------|
+| Urgent | Add to Lingering in dev_context, start immediately |
+| Planned | Create task file using `.ai/templates/TASK_FILE_TEMPLATE.md` |
 
 ---
 
 ## Step 7: Confirm Ready
 
 ```
-✅ Session Ready
+✅ SESSION READY
 
 👤 Developer: {name}
 🌿 Branch: {branch}
-📋 Working on: {selected task}
-📊 Context baseline: {X}%
+📋 Task: {selected work}
+🔒 Constants: {count} items loaded
 
-🔒 Task Constants loaded:
-   - {key item 1}
-   - {key item 2}
-
-Ready to go!
+Ready to work!
 ```
 
 ---
 
-## Quick Examples
+## Quick Reference
 
-**Continue phase work:**
-```
-/start-session
-→ Pick: P (Primary)
-→ Load Phase N handoff, continue
-```
-
-**Fix a bug that came up:**
-```
-/start-session
-→ Pick: 1 (Lingering - Excel generator bug)
-→ Load bug context, fix it
-```
-
-**Something new and urgent:**
-```
-/start-session
-→ Pick: N (New)
-→ "Critical: Dashboard timeout"
-→ Add to Lingering, start immediately
-```
+| Situation | Action |
+|-----------|--------|
+| New chat | Run this workflow |
+| Resuming after break | Run this workflow |
+| Context feels stale | `/check-status` first |
+| Phase just completed | `/phase-complete` then new chat |

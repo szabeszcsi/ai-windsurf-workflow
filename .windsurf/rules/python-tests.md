@@ -1,112 +1,92 @@
 ---
 trigger: glob
 globs: ["**/test_*.py", "**/*_test.py", "**/tests/**/*.py"]
-description: Python testing standards - automatically loaded when working with test files
+description: Python testing standards
 ---
 
 # Python Testing Standards
 
-## Framework
-
-- Python: pytest with pytest-cov, pytest-mock
-- Async: pytest-asyncio
-
----
-
-## Directory Structure
-
-```
-tests/
-├── unit/              # Fast, isolated tests
-│   ├── {module}/      # Mirror src/ structure
-│   └── conftest.py    # Shared fixtures
-├── integration/       # Tests with real dependencies
-│   └── conftest.py
-└── e2e/               # End-to-end (if applicable)
-```
+**Full reference:** `.ai/standards/testing.md`
 
 ---
 
 ## File Placement
 
-| Type | Location |
-|------|----------|
-| Unit tests | `tests/unit/{module}/test_*.py` |
-| Integration tests | `tests/integration/test_*.py` |
-| Test utilities | `tests/utilities/` |
-| Test fixtures | `tests/fixtures/` |
+| Test Type | Location | Naming |
+|-----------|----------|--------|
+| Unit tests | `tests/unit/{module}/` | `test_{module}.py` |
+| Integration | `tests/integration/` | `test_{feature}.py` |
+| Fixtures | `tests/fixtures/` | descriptive names |
+| Utilities | `tests/utilities/` | `{helper}.py` |
 
-**NEVER** create test files in project root.
-
----
-
-## Naming Conventions
-
-- **Files:** `test_{module_name}.py`
-- **Functions:** `test_{function_name}_{scenario}`
-- **Classes:** `Test{ClassName}`
+**Mirror source structure:** `src/auth/handler.py` → `tests/unit/auth/test_handler.py`
 
 ---
 
-## Test Structure (Arrange-Act-Assert)
+## Test Structure (AAA Pattern)
 
 ```python
-def test_creates_valid_token(mock_user):
-    # Arrange - set up test data
-    user = User(id=1, name="Test")
-
-    # Act - perform the action
+def test_creates_valid_token_for_active_user():
+    # Arrange
+    user = User(id=1, name="Test", active=True)
+    
+    # Act
     token = create_token(user)
-
-    # Assert - verify results
+    
+    # Assert
     assert token is not None
     assert len(token) > 0
 ```
 
 ---
 
-## Best Practices
+## Naming Convention
 
-- Use fixtures for setup/teardown
-- Use `pytest.mark.parametrize` for multiple inputs
-- Mock external services - never call real APIs in unit tests
-- Integration tests can use test database
-- Test behavior, not implementation
-
----
-
-## Coverage Requirements
-
-| Type | Target |
-|------|--------|
-| Minimum | 80% line coverage |
-| Critical paths | 100% branch coverage |
-| Error handling | 100% |
-
----
-
-## Example
+Pattern: `test_{what}_{condition}_{expected}`
 
 ```python
-# tests/unit/auth/test_jwt_handler.py
-import pytest
-from src.auth.jwt_handler import create_token, validate_token
+# ✅ Good - descriptive
+def test_parse_config_with_missing_file_raises_error():
+def test_calculate_total_with_empty_list_returns_zero():
 
-class TestCreateToken:
-    def test_creates_valid_token(self, mock_user):
-        token = create_token(mock_user)
-        assert token is not None
-
-    def test_raises_on_invalid_user(self):
-        with pytest.raises(ValueError):
-            create_token(None)
+# ❌ Bad - vague
+def test_parse():
+def test_it_works():
 ```
 
 ---
 
-## Before Declaring Complete
+## Key Practices
 
-- [ ] Unit tests written and passing
-- [ ] Run `pytest tests/unit/ -v`
-- [ ] Run actual execution (not just tests)
-- [ ] Check logs for warnings/errors
+- Use `pytest` fixtures for setup/teardown
+- Use `pytest.mark.parametrize` for multiple inputs
+- Mock external services - never call real APIs in unit tests
+- Test behavior, not implementation details
+
+---
+
+## Coverage
+
+| Type | Target |
+|------|--------|
+| New code | 80% minimum |
+| Critical paths | 100% |
+| Error handling | 100% |
+
+---
+
+## What to Test
+
+| Category | Examples |
+|----------|----------|
+| Happy path | Valid inputs, expected flow |
+| Edge cases | Empty, boundaries, None, large inputs |
+| Error cases | Invalid inputs, failures, timeouts |
+
+---
+
+## Before Complete
+
+- [ ] `pytest tests/unit/{module}/ -v` passes
+- [ ] No hardcoded test values (use fixtures/constants)
+- [ ] Mocks used for external dependencies

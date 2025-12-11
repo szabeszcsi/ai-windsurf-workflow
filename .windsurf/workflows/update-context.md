@@ -1,27 +1,32 @@
 ---
 name: update-context
-description: Save progress mid-session. Usage: /update-context
-auto_execution_mode: 1
+description: Save progress mid-session. Use when you've made progress but phase isn't complete.
+auto_execution_mode: 0
 ---
 
-# Update Context Workflow
+# Update Context
 
 Save progress mid-session without completing a phase.
 
----
-
-## When to Use
-
-- Made progress but phase not done
-- Session ending (time, context running high)
-- Want a checkpoint before risky change
-- Switching to different task temporarily
-
+**Use when:** Made progress, session ending, want checkpoint, switching tasks  
 **Don't use when:** Phase is complete → use `/phase-complete` instead
 
 ---
 
-## Step 1: Identify Work Type
+## Step 1: Identify Developer
+
+**If `.windsurf/team.md` exists:** Confirm which developer's context to update.
+
+| Developer | Context File |
+|-----------|--------------|
+| {Name 1} | dev1_context.md |
+| {Name 2} | dev2_context.md |
+
+**Single-developer:** Use `dev_context.md`
+
+---
+
+## Step 2: Classify Work Type
 
 ```
 📝 SAVING PROGRESS
@@ -34,16 +39,16 @@ What type of work?
 
 ---
 
-## Step 2: Gather Summary
+## Step 3: Gather Summary
 
-Ask yourself / user:
+For each work item:
 - What was accomplished?
-- What's the current status? (% complete, blocked, etc.)
+- What's the status? (% complete, blocked, etc.)
 - What's the immediate next step?
 
 ---
 
-## Step 3: Check for New Task Constants
+## Step 4: Check for New Task Constants
 
 **Did we create anything that future sessions must NOT break?**
 
@@ -53,30 +58,28 @@ Examples:
 - Config structure key
 - Fixture file
 
-**If yes:** Add to `🔒 Task Constants` section in dev_context.md
-
-**See:** `.ai/TASK_FILE_GENERATION_GUIDE.md` for full Task Constants guidance
+**If yes:** Add to `🔒 Task Constants` section in dev_context.
 
 ---
 
-## Step 4: Update dev_context.md
+## Step 5: Update Context File
 
-**For different work types, see examples in:** `.ai/templates/DEV_CONTEXT_TEMPLATE.md`
+### For PRIMARY task:
 
-### Quick Updates:
-
-**PRIMARY task:**
 ```markdown
 ## 🎯 Primary Task
 **{Task Name}** - Phase {N} 🚧
 - ✅ {completed item}
 - 🚧 {in progress item}
 - [ ] {remaining item}
-**Status:** {X}% complete
-**Next:** {immediate next step}
+
+Status: {X}% complete
+Next: {immediate next step}
+Handoff: `docs/tasks/{component}_phase{N}_handoff.md`
 ```
 
-**LINGERING task:**
+### For LINGERING task:
+
 ```markdown
 ## 🔥 Lingering Tasks
 1. **{Bug/Issue}** - {🔴/🟡/🟢} {✅/🚧}
@@ -85,7 +88,8 @@ Examples:
    - Next: {what's next}
 ```
 
-**NEW discovered issue:**
+### For NEW discovered issue:
+
 ```markdown
 ## 🔥 Lingering Tasks
 {N}. **{New Issue}** - 🆕 {priority}
@@ -96,41 +100,40 @@ Examples:
 
 ---
 
-## Step 5: Create Session Doc (if significant work)
+## Step 6: Create Session Doc (if significant work)
 
 For non-trivial work, create: `docs/working/{task}_{date}.md`
 
-**Use template:** `.ai/templates/SESSION_ARCHIVE_TEMPLATE.md`
-
----
-
-## Step 6: Update PROJECT_STATUS.md
-
-Update the Active Work section:
-
 ```markdown
-### {Name} - {Layer/Component}
-- **Branch:** `{branch}`
-- **Status:** {current status}
-- **Last:** {what was just done}
-- **Next:** {what's next}
-- **Lingering:** {count} items
+# {Task/Bug Name} Session
+
+**Date:** {date}
+**Developer:** {name}
+**Type:** Bug Fix / Investigation / Feature
+
+## What Was Done
+- {item 1}
+- {item 2}
+
+## Files Modified
+- `{path}` - {change}
+
+## Status
+{Complete / In Progress / Blocked}
+
+## Next Steps
+- [ ] {next item}
 ```
 
 ---
 
-## Step 7: Check File Size
+## Step 7: Check Context File Size
 
-| dev_context.md Size | Action |
-|---------------------|--------|
+| Size | Action |
+|------|--------|
 | < 1.5 KB | ✅ OK |
-| 1.5-2 KB | ⚠️ Consider archiving old sessions |
-| > 2 KB | 🚨 Archive NOW before continuing |
-
-**Archive process:**
-1. Move old session summaries to `docs/archive/`
-2. Keep only recent (last 3) completions
-3. Keep current task and lingering items
+| 1.5-2 KB | ⚠️ Archive old sessions soon |
+| > 2 KB | 🚨 Archive NOW - move old completions to `docs/archive/` |
 
 ---
 
@@ -139,45 +142,27 @@ Update the Active Work section:
 ```
 ✅ CONTEXT SAVED
 
-Updated:
-- dev_context.md
-- PROJECT_STATUS.md
-- docs/working/{session_doc}.md (if created)
-
+Updated: {dev_context_file}
 Work type: {Primary/Lingering/New}
 Status: {status}
-File size: {X} KB
+Size: {X} KB
 
 Next session prompt:
 ---
-I'm {name}. Continue {task description}.
-Read dev_context.md for current state.
+Run /start-session
+Continue: {task description}
 Branch: {branch}
-Last: {what we just did}
-Next: {immediate next step}
 ---
 ```
 
 ---
 
-## Lingering Task Quick Reference
+## Quick Reference
 
-### Priority Levels
-- 🔴 **Critical** - Blocking work, fix immediately
-- 🟡 **High** - Should fix soon
-- 🟢 **Medium** - Fix when convenient
-- ⚪ **Low** - Backlog
-
-### When to Promote to Task File
-If lingering item:
-- Takes >2 sessions to fix
-- Requires >200 lines of new code
-- Affects multiple components
-- Needs formal testing
-
-→ Create task file using `.ai/templates/TASK_FILE_TEMPLATE.md`
-
-### Cleanup
-When lingering task DONE:
-- Move from Lingering to Recent Completions
-- Archive/delete session doc
+| Scenario | Update Section |
+|----------|----------------|
+| Phase progress | 🎯 Primary Task |
+| Bug fix progress | 🔥 Lingering Tasks |
+| New issue found | 🔥 Lingering Tasks (add new) |
+| Task completed | Move to ✅ Recent Completions |
+| New constant created | 🔒 Task Constants |

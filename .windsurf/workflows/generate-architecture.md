@@ -1,179 +1,275 @@
 ---
 name: generate-architecture
-description: Create or update SOLUTION_ARCHITECTURE.md for a project. Usage: /generate-architecture
+description: Create SOLUTION_ARCHITECTURE.md from requirements. Run when starting a new project.
 auto_execution_mode: 0
 ---
 
-# Generate Architecture Workflow
+# Generate Architecture
 
-Create or update SOLUTION_ARCHITECTURE.md for a project.
+Create or update `SOLUTION_ARCHITECTURE.md` from requirements/SOW.
 
----
-
-## When to Use
-
-- **New project:** Define structure before coding
-- **Existing project:** Document current structure
-- **Major refactor:** Update after significant changes
+**Use when:**
+- Starting a new project
+- Major architectural changes
+- Onboarding to existing project (document what exists)
 
 ---
 
-## Mode A: Analyze Existing Project
+## Step 1: Gather Requirements
 
-### Step 1: Scan Project Structure
+**What input do you have?**
 
-```bash
-# Get directory tree
-find . -type f -name "*.py" -o -name "*.js" -o -name "*.ts" | head -50
-ls -la
+| Input Type | Examples |
+|------------|----------|
+| SOW / Requirements doc | Formal specification |
+| Scoping call transcript | Meeting notes, discussion |
+| User description | Verbal/written explanation |
+| Existing codebase | Reverse-engineer structure |
+
+**Ask if unclear:**
 ```
-
-### Step 2: Identify Key Patterns
-
-Look for:
-- Source code location (`src/`, `lib/`, `app/`)
-- Test location (`tests/`, `__tests__/`, `spec/`)
-- Configuration files
-- Entry points (`main.py`, `index.js`, `app.py`)
-- Package/module structure
-
-### Step 3: Ask Clarifying Questions
-
-```
-I've scanned the project. Let me confirm:
-
-1. Main source code is in: {location}?
-2. Tests are in: {location}?
-3. The project is a: {type - API, CLI, library, etc}?
-4. Main language(s): {languages}?
-5. Any special conventions I should know about?
-```
-
-### Step 4: Generate Document
-
-Create `SOLUTION_ARCHITECTURE.md` using template from `.ai/templates/SOLUTION_ARCHITECTURE_TEMPLATE.md`
-
----
-
-## Mode B: Design New Project
-
-### Step 1: Gather Requirements
-
-```
-Let's design the project structure. Please tell me:
+To create the architecture, I need to understand:
 
 1. What does this project do? (brief description)
-2. What type of project? (API, CLI, library, web app, etc)
-3. Main language(s)?
-4. Any specific frameworks? (FastAPI, React, etc)
-5. Expected size? (small script, medium app, large system)
-6. Will it have tests? What kind?
-7. Any deployment considerations?
+2. What type? (API, CLI, library, web app, etc.)
+3. Main language(s) and frameworks?
+4. Key components/modules?
+5. External dependencies? (databases, APIs, services)
+6. Expected scale? (small script → large system)
+7. Any constraints? (security, performance, compliance)
 ```
 
-### Step 2: Propose Structure
+---
 
-Based on answers, propose a structure:
+## Step 2: Analyze Requirements
+
+From input, extract:
+
+### Core Purpose
+- What problem does it solve?
+- Who uses it?
+- What's the main workflow?
+
+### Technical Decisions
+- Language(s) and version(s)
+- Frameworks
+- Database/storage
+- External integrations
+
+### Component Breakdown
+- What are the main modules?
+- How do they interact?
+- What are the boundaries?
+
+---
+
+## Step 3: Propose Structure
+
+Based on analysis, create directory structure:
 
 ```markdown
 ## Proposed Structure
 
 {project}/
 ├── src/                    # Source code
-│   ├── {module1}/          # {purpose}
-│   ├── {module2}/          # {purpose}
+│   ├── {component1}/       # {purpose}
+│   ├── {component2}/       # {purpose}
 │   └── common/             # Shared utilities
+│
 ├── tests/                  # Test files
-│   ├── unit/
-│   └── integration/
+│   ├── unit/               # Fast, isolated tests
+│   └── integration/        # Full pipeline tests
+│
 ├── config/                 # Configuration
+│   └── config.yaml         # Main config
+│
 ├── docs/                   # Documentation
-│   ├── tasks/              # Task files (AI workflow)
-│   └── ...
-└── scripts/                # Utility scripts
-
-Does this structure work for you, or should we adjust?
+│   ├── tasks/              # Task files for AI workflow
+│   │   └── completed/      # Archived handoffs
+│   ├── tech-summaries/     # Module API summaries
+│   │   └── {layer}/        # Per-layer summaries
+│   └── working/            # Work-in-progress
+│
+├── scripts/                # Utility scripts
+│
+├── .windsurf/              # Windsurf configuration
+│   ├── rules/              # Coding rules
+│   ├── workflows/          # Workflow definitions
+│   └── team.md             # Developer mapping
+│
+├── SOLUTION_ARCHITECTURE.md  # This file
+├── PROJECT_STATUS.md         # Current status
+├── dev_context.md            # Session state
+└── {entry_point}             # main.py, index.js, etc.
 ```
 
-### Step 3: Confirm and Generate
-
-After user confirms, create `SOLUTION_ARCHITECTURE.md`
-
----
-
-## Document Structure
-
-The generated `SOLUTION_ARCHITECTURE.md` should include:
-
-1. **Overview** - What the project does
-2. **Directory Structure** - Full tree with descriptions
-3. **Components** - Key modules/packages and their responsibilities
-4. **File Placement Rules** - Where different file types go
-5. **Naming Conventions** - How to name files, classes, etc.
-6. **Dependencies** - Key external dependencies
-7. **Configuration** - How config is handled
+**Confirm with user:**
+```
+Does this structure work for your project?
+[Y] Yes, generate architecture doc
+[M] Modify structure first
+[?] Questions about specific choices
+```
 
 ---
 
-## Template Reference
+## Step 4: Generate SOLUTION_ARCHITECTURE.md
 
-See `.ai/templates/SOLUTION_ARCHITECTURE_TEMPLATE.md` for full template.
+Create the file using template from `.ai/templates/SOLUTION_ARCHITECTURE_TEMPLATE.md`
 
----
-
-## Tips
-
-### Keep It Updated
-- Update when adding new modules
-- Update after major refactors
-- Keep file placement rules current
-
-### Be Specific
-- Include actual paths, not just patterns
-- Give concrete examples for naming
-- List real dependencies
-
-### Link to Standards
-Reference `.ai/standards/{language}.md` for coding standards rather than duplicating.
-
----
-
-## Example Output
+**Key sections:**
 
 ```markdown
 # Solution Architecture
 
 ## Overview
-PowerBI Documentation Suite - Multi-layer documentation generator.
+{Brief description - 2-3 sentences}
 
-## Structure
-project/
-├── src/
-│   ├── sql_layer/      # Database documentation
-│   ├── model_layer/    # Semantic model docs
-│   ├── ui_layer/       # Report UI docs
-│   └── common/         # Shared utilities
-├── tests/
-│   ├── unit/           # Fast unit tests
-│   └── integration/    # Full pipeline tests
-├── config/
-│   └── config.yaml     # Main configuration
-├── docs/
-│   ├── tasks/          # AI task files
-│   └── architecture/   # Design docs
-└── output/             # Generated documentation
+**Type:** {API / CLI / Library / Web App / etc.}
+**Primary Language:** {language}
+**Framework:** {framework or "None"}
 
-## File Placement
-| Type | Location |
-|------|----------|
-| Source code | src/{layer}/ |
-| Unit tests | tests/unit/{layer}/ |
-| Integration tests | tests/integration/ |
-| Task files | docs/tasks/ |
-| Config | config/ |
+---
 
-## Naming Conventions
-- Files: snake_case.py
-- Classes: PascalCase
-- Tests: test_{module}.py
+## Directory Structure
+{Full tree with descriptions}
+
+---
+
+## Components
+
+### {Component 1}
+**Location:** `src/{component1}/`
+**Purpose:** {what it does}
+**Key Files:**
+- `{file}.py` - {description}
+
+### {Component 2}
+...
+
+---
+
+## File Placement Rules
+
+| File Type | Location | Example |
+|-----------|----------|---------|
+| Source code | `src/{component}/` | `src/api/routes.py` |
+| Unit tests | `tests/unit/{component}/` | `tests/unit/api/test_routes.py` |
+| Tech summaries | `docs/tech-summaries/{layer}/` | `docs/tech-summaries/api/routes.md` |
+| Task files | `docs/tasks/` | `docs/tasks/api_tasks.md` |
+
+---
+
+## Dependencies
+
+### Runtime
+- {package} - {purpose}
+
+### Development
+- pytest - Testing
+- {linter} - Code quality
+
+---
+
+## Configuration
+
+**Main config:** `config/config.yaml`
+**Secrets:** Environment variables or `config/credentials.yaml` (gitignored)
+
+---
+
+## Entry Points
+
+| Purpose | Command |
+|---------|---------|
+| Run app | `python main.py` |
+| Run tests | `pytest tests/` |
 ```
+
+---
+
+## Step 5: Initialize Tech Summaries Structure
+
+Create initial structure:
+
+```bash
+mkdir -p docs/tech-summaries
+```
+
+Create `docs/tech-summaries/_index.md`:
+
+```markdown
+# Tech Summaries
+
+Quick reference documentation for each module.
+Load these (~2KB each) instead of full source (~50KB) for faster context.
+
+## Layers
+
+| Layer | Modules | Status |
+|-------|---------|--------|
+| {layer1} | {planned modules} | 📋 Planned |
+| {layer2} | {planned modules} | 📋 Planned |
+
+## Usage
+
+- Before implementing: Read relevant summaries
+- After implementing: Update via `/phase-complete`
+- If stale: Run `/generate-tech-summary --validate`
+```
+
+---
+
+## Step 6: Confirm Output
+
+```
+✅ ARCHITECTURE GENERATED
+
+Created:
+- SOLUTION_ARCHITECTURE.md ({N} lines)
+- docs/tech-summaries/_index.md
+
+Next steps:
+1. Review and adjust SOLUTION_ARCHITECTURE.md
+2. Create PROJECT_STATUS.md (optional)
+3. Create dev_context.md from template
+4. Start first task with /plan-task
+```
+
+---
+
+## Modes
+
+### New Project (default)
+- Full requirements gathering
+- Create from scratch
+
+### Document Existing
+```
+/generate-architecture --existing
+```
+- Scan existing codebase
+- Generate architecture from what exists
+- Fill in gaps with questions
+
+### Update
+```
+/generate-architecture --update
+```
+- Read existing SOLUTION_ARCHITECTURE.md
+- Update specific sections
+- Preserve what's still accurate
+
+---
+
+## Quick Reference
+
+| Input | Output |
+|-------|--------|
+| Requirements/SOW | `SOLUTION_ARCHITECTURE.md` |
+| Scoping discussion | Project structure |
+| Existing codebase | Documentation of what exists |
+
+**After architecture:**
+→ Use `/plan-task` for each feature
+→ Use `/phase-complete` to update tech summaries

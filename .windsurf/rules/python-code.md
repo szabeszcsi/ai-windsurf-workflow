@@ -1,24 +1,12 @@
 ---
 trigger: glob
-globs: ["**/*.py", "!**/test_*.py", "!**/*_test.py"]
-description: Python coding standards - automatically loaded when working with Python source files
+globs: ["**/*.py", "!**/test_*.py", "!**/*_test.py", "!**/tests/**/*.py"]
+description: Python coding standards for source files (not tests)
 ---
 
-# Python Coding Standards
+# Python Code Standards
 
-## 🚨 After Every Code Change
-
-**CRITICAL:** Update `docs/tech-summaries/{layer}/{module}.md`
-
-**Include:**
-- Public function/method signatures
-- Class constructors & public methods
-- Dependencies (uses/used by)
-- Key design patterns
-
-**Template:** `.ai/templates/TECH_SUMMARY_TEMPLATE.md`
-
-**Why:** Multi-session continuity - fresh chats load summaries (2KB) vs full source (50KB)
+**Full reference:** `.ai/standards/python.md`
 
 ---
 
@@ -26,33 +14,36 @@ description: Python coding standards - automatically loaded when working with Py
 
 | Metric | Limit |
 |--------|-------|
-| Lines per file | 500-650 max |
-| Lines per function/method | 50 max |
+| Lines per file | 500 max (650 hard limit) |
+| Lines per function | 50 max |
+| Nesting depth | 4 levels max |
 
 **If exceeded:** Split into logical modules.
 
 ---
 
-## Required in Every File
+## Required Patterns
 
 ```python
-# Logging
-from common.logger import setup_logger  # or: import logging
-logger = setup_logger(__name__)
+# Logging - use project logger or standard
+import logging
+logger = logging.getLogger(__name__)
 
 # Type hints on public methods
-def process(self, data: List[Dict]) -> Dict[str, Any]:
+def process(self, data: list[dict]) -> dict[str, Any]:
     ...
 
 # Docstrings (Google style)
-"""Brief description.
+def calculate(items: list, rate: float) -> float:
+    """Brief description.
 
-Args:
-    data: Input data description
+    Args:
+        items: What this parameter is
+        rate: What this parameter is
 
-Returns:
-    Output description
-"""
+    Returns:
+        What gets returned
+    """
 ```
 
 ---
@@ -64,7 +55,6 @@ Returns:
 | Files | snake_case | `data_processor.py` |
 | Classes | PascalCase | `DataProcessor` |
 | Functions | snake_case | `process_data()` |
-| Variables | snake_case | `user_count` |
 | Constants | UPPER_SNAKE | `MAX_RETRIES` |
 | Private | _prefix | `_internal_method()` |
 
@@ -75,16 +65,13 @@ Returns:
 ```python
 # 1. Standard library
 import os
-import sys
 from pathlib import Path
 
-# 2. Third-party packages
+# 2. Third-party
 import pandas as pd
-from sqlalchemy import create_engine
 
 # 3. Project imports
-from common.config import Config
-from .utils import helper_function
+from src.common import utils
 ```
 
 ---
@@ -92,35 +79,21 @@ from .utils import helper_function
 ## Error Handling
 
 ```python
-# ✅ DO: Catch specific exceptions
+# ✅ Specific exceptions with context
 try:
     result = parse_config(path)
 except FileNotFoundError:
-    logger.error(f"Config file not found: {path}")
+    logger.error(f"Config not found: {path}")
     raise
 except json.JSONDecodeError as e:
-    logger.error(f"Invalid JSON: {e}")
+    logger.error(f"Invalid JSON in {path}: {e}")
     raise
 
-# ❌ DON'T: Bare except or swallow errors
+# ❌ Never do this
 try:
-    risky_operation()
-except:  # BAD
-    pass  # BAD
-```
-
----
-
-## Type Hints
-
-```python
-from typing import List, Dict, Optional, Union, Any
-
-def process(items: List[str]) -> Dict[str, int]:
-    ...
-
-def find_user(id: int) -> Optional[User]:
-    ...
+    something()
+except:
+    pass
 ```
 
 ---
@@ -129,14 +102,42 @@ def find_user(id: int) -> Optional[User]:
 
 ```python
 # ❌ Mutable default argument
-def add_item(item, items=[]):  # BAD
+def add_item(item, items=[]):
     items.append(item)
     return items
 
-# ✅ Use None instead
+# ✅ Use None
 def add_item(item, items=None):
     if items is None:
         items = []
     items.append(item)
     return items
 ```
+
+---
+
+## Configuration-Driven Development
+
+```python
+# ✅ Configuration-driven
+config = load_config()
+model = config.get('ai_model', 'default-model')
+timeout = config.get('timeout', 30)
+
+# ❌ Hardcoded
+model = "gpt-4"
+timeout = 30
+```
+
+---
+
+## Universal Don'ts
+
+| Don't | Do Instead |
+|-------|------------|
+| Hardcode config values | Use config files (YAML, JSON, env) |
+| Hardcode API keys/secrets | Use credentials file or env vars (never commit!) |
+| Skip error handling | Wrap risky operations (API calls, DB, file I/O) |
+| Duplicate code | Check for existing utilities first |
+| Ignore shared modules | Use project's common/ utilities |
+| Commit secrets/logs | Ensure `.gitignore` covers them |

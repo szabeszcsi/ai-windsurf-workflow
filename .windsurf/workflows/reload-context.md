@@ -1,12 +1,14 @@
 ---
 name: reload-context
-description: Emergency context recovery. Usage: /reload-context
+description: Emergency context recovery. Use when confused about state or after "summarizing conversation" appears.
+auto_execution_mode: 0
 ---
 
 # Reload Context
 
-## When to Use
+Emergency recovery when context is lost or confused.
 
+**Use when:**
 - 🚨 "Summarizing conversation" appeared
 - ❓ Confused about task/branch/developer
 - ❓ Made contradictory statements
@@ -14,26 +16,38 @@ description: Emergency context recovery. Usage: /reload-context
 
 ---
 
-## Step 1: Ask Developer
+## Step 1: Identify Developer
 
+**Check `.windsurf/team.md` for developer mapping.**
+
+Ask:
 ```
 🚨 CONTEXT RECOVERY
 
-Who are you? (Ferran / Szabi)
+Who are you?
 ```
 
-Wait for answer.
+| Developer | Context File |
+|-----------|--------------|
+| {from team.md} | {dev_context_file} |
+
+**Single-developer project:** Use `dev_context.md`
 
 ---
 
-## Step 2: Load Files
+## Step 2: Load Context Files
+
+Read in order:
+
+```
+1. {dev_context_file}        → Developer state, Task Constants
+2. PROJECT_STATUS.md         → Project overview
+3. SOLUTION_ARCHITECTURE.md  → Project structure
+```
 
 ```bash
-# Read in order:
-1. dev{X}_context.md      # Developer state
-2. PROJECT_STATUS.md       # Project overview
-3. git branch --show-current
-4. git status --short
+git branch --show-current
+git status --short
 ```
 
 ---
@@ -41,12 +55,16 @@ Wait for answer.
 ## Step 3: Identify Active Work
 
 From context file, extract:
-- **Primary task:** Phase work in progress
-- **Lingering tasks:** Bugs/ad-hoc items
-- **Current focus:** What was being worked on
 
-If active handoff exists:
-- Read `docs/tasks/{layer}_phase{N}_handoff.md`
+| Item | Value |
+|------|-------|
+| Primary task | {phase work in progress} |
+| Lingering tasks | {bugs/ad-hoc items} |
+| Current focus | {what was being worked on} |
+| Task Constants | {🔒 items to preserve} |
+
+**If active handoff exists:**
+Load `docs/tasks/{component}_phase{N}_handoff.md`
 
 ---
 
@@ -57,12 +75,14 @@ If active handoff exists:
 
 👤 Developer: {name}
 🌿 Branch: {branch}
+📄 Context: {dev_context_file}
 
-🎯 Primary: {task} - Phase {N}
-🔥 Lingering: {count} items
+🎯 PRIMARY: {task} - Phase {N}
+🔥 LINGERING: {count} items
+🔒 CONSTANTS: {count} items
 
 Files loaded:
-✅ dev{X}_context.md
+✅ {dev_context_file}
 ✅ PROJECT_STATUS.md
 ✅ {handoff if applicable}
 
@@ -76,19 +96,22 @@ What would you like to work on?
 
 ## If Reload Fails
 
-Start **new chat** with:
+Context too degraded to recover meaningfully?
+
+**Start fresh:**
 ```
-/start-session {name}
+New chat → /start-session
 ```
 
 Fresh context > degraded context.
 
 ---
 
-## Quick Recovery Checklist
+## Quick Checklist
 
 - [ ] Developer identified
-- [ ] Context file read
+- [ ] Context file loaded
 - [ ] Branch verified
+- [ ] Task Constants noted
 - [ ] Active work identified
 - [ ] Ready to continue
