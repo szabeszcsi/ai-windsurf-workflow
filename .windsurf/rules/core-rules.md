@@ -21,15 +21,19 @@ trigger: always_on
 ## 1. SESSION START
 
 ```
-🚨 WHO ARE YOU? Ferran or Szabi?
+🚨 WHO ARE YOU? (e.g., Ferran, Szabi, or your developer ID)
 ```
 
-**NO EXCEPTIONS.** Then read `./dev{1,2}_context.md` and verify branch.
+**NO EXCEPTIONS.** Then read `./dev{X}_context.md` and verify branch.
+
+**Pattern:** `dev{X}_context.md` where X = developer number
 
 | Developer | Context File |
 |-----------|--------------|
 | Ferran | `./dev1_context.md` |
 | Szabi | `./dev2_context.md` |
+
+*(Example - customize for your team)*
 
 ---
 
@@ -94,7 +98,7 @@ When tests pass and phase work done:
 | Tests | `tests/unit/`, `tests/integration/` |
 | Test utilities | `tests/utilities/` |
 | Scripts | `scripts/` |
-| Source | `src/{layer}/` |
+| Source | `src/{module}/` (e.g., backend/, api/, frontend/) |
 | Task docs | `docs/tasks/` |
 | Archives | `docs/archive/` |
 | Temp files | `docs/working/` |
@@ -114,11 +118,12 @@ When tests pass and phase work done:
 
 ## 7. ENVIRONMENT
 
-Before tests: verify Python 3.12/3.13
+**Verify correct virtual environment activated before running tests.**
+
+```bash
+python --version  # Check Python version
+# Activate venv if needed (adjust path for your project)
 ```
-python --version
-```
-If wrong → `.\venv313\Scripts\Activate.ps1`
 
 ---
 
