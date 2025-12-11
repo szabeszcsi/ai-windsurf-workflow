@@ -1,34 +1,58 @@
+---
+name: check-status
+description: Quick context health check and status report. Usage: /check-status
+auto_execution_mode: 0
+---
+
 # Check Status Workflow
 
 Quick context health check and status report.
 
 ---
 
-## Step 1: Request Context Usage
+## Step 1: Checkpoint Integrity Check (CRITICAL)
 
-Ask user:
-```
-Please run `/context` and share the result.
-```
+**Be honest - which applies?**
 
----
+| Situation | Response |
+|-----------|----------|
+| Direct memory of this session | ✅ Continue to Step 2 |
+| Started from checkpoint/summary | 🚨 **STOP** - Disclose, recommend fresh `/start-session` |
+| Confused about state | 🔄 Run `/reload-context` |
 
-## Step 2: Interpret Result
-
-| Usage | Status | Recommendation |
-|-------|--------|----------------|
-| < 60% | ✅ Healthy | Continue freely |
-| 60-75% | ⚠️ Moderate | Plan a good stopping point |
-| 75-85% | 🟠 High | Complete current item, then save and wrap up |
-| > 85% | 🚨 Critical | Save immediately with `/update-context`, start new chat |
+**If checkpoint-only → HARD STOP.** Disclose to user immediately.
 
 ---
 
-## Step 3: Self-Check for Degradation
+## Step 2: Identity Check
+
+| Question | Answer |
+|----------|--------|
+| **Developer?** | {Name} / ❓ Unknown |
+| **Branch?** | {branch} / ❓ Unknown |
+| **Working on?** | {task} / ❓ Unknown |
+
+**If ANY ❓ → Run `/reload-context`**
+
+---
+
+## Step 3: Assess Context Health
+
+### Message Count (Approximate)
+
+Estimate how many messages in this conversation:
+
+| Count | Status | Action |
+|-------|--------|--------|
+| 1-40 | ✅ Fresh | Continue freely |
+| 40-60 | ⚠️ Aging | Plan wrap-up point |
+| 60+ | 🚨 Risk | Complete current item, new chat |
+
+### Degradation Symptoms
 
 Honestly assess - am I showing these symptoms?
 
-- 🔄 Re-reading files I already read this session
+- 🔄 Re-reading files already read this session
 - 🔄 Asking questions that were already answered
 - 🔄 Repeating mistakes I made earlier
 - 🔄 Putting files in wrong locations
@@ -49,10 +73,11 @@ Recommend: Save progress now with /update-context and start fresh chat.
 📊 STATUS CHECK
 
 👤 {Name} | 🌿 {branch}
-📍 Context: {usage}% - {✅ Healthy / ⚠️ Moderate / 🟠 High / 🚨 Critical}
+📍 Context: {✅ Intact / ⚠️ Degrading / 🚨 Lost}
+⏱️ Messages: ~{N} ({✅ Fresh / ⚠️ Aging / 🚨 Risk})
 
 🎯 PRIMARY: {Phase N - Task}
-   Status: {X}% complete
+   Status: {X}% complete | {✅/🚧/⏸️}
    Current: {what we're doing now}
 
 🔥 LINGERING ({count}):
@@ -75,11 +100,11 @@ Based on status, suggest next action:
 
 | Situation | Suggestion |
 |-----------|------------|
-| Healthy, task in progress | Continue working |
-| Healthy, task just completed | `/update-context` to save, continue or new task |
-| Moderate, mid-task | Identify good stopping point |
-| High, any state | Complete immediate item, then `/update-context` |
-| Critical, any state | `/update-context` NOW, recommend new chat |
+| Fresh context, task in progress | Continue working |
+| Fresh context, task just completed | `/update-context` to save, continue or new task |
+| Aging context, mid-task | Identify good stopping point |
+| High message count, any state | Complete immediate item, then `/update-context` |
+| Risk zone (60+ messages) | `/update-context` NOW, recommend new chat |
 | Degradation symptoms | Acknowledge, `/update-context`, new chat |
 
 ---
@@ -88,19 +113,44 @@ Based on status, suggest next action:
 
 **Everything OK:**
 ```
-📊 Context at 45% - ✅ Healthy
+📊 Context: ✅ Fresh (25 messages)
 Continue working, plenty of room.
 ```
 
 **Time to wrap up:**
 ```
-📊 Context at 72% - ⚠️ Moderate
+📊 Context: ⚠️ Aging (48 messages)
 Let's find a good stopping point in the next few exchanges.
 ```
 
 **Need to stop:**
 ```
-📊 Context at 88% - 🚨 Critical
+📊 Context: 🚨 Risk (65 messages)
 Let's save progress immediately with /update-context.
 Then start a fresh chat to continue.
 ```
+
+---
+
+## Task Completion Check
+
+**Was a task just completed this session?**
+
+| Answer | Action |
+|--------|--------|
+| Yes | → Suggest: "Task complete. Run `/update-context` to save progress?" |
+| No | → Continue with current work |
+
+---
+
+## Quick Actions
+
+| Situation | Command |
+|-----------|---------|
+| Everything OK | Continue working |
+| Task just completed | `/update-context` |
+| Minor confusion | `/reload-context` |
+| Phase complete | `/phase-complete` |
+| Need to save progress | `/update-context` |
+| Things broken | `/abort` |
+| Context exhausted | New chat + `/start-session` |

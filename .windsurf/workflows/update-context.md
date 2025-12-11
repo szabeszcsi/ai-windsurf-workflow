@@ -1,3 +1,9 @@
+---
+name: update-context
+description: Save progress mid-session. Usage: /update-context
+auto_execution_mode: 1
+---
+
 # Update Context Workflow
 
 Save progress mid-session without completing a phase.
@@ -47,13 +53,19 @@ Examples:
 - Config structure key
 - Fixture file
 
-If yes → Add to Task Constants section in dev_context.md
+**If yes:** Add to `🔒 Task Constants` section in dev_context.md
+
+**See:** `.ai/TASK_FILE_GENERATION_GUIDE.md` for full Task Constants guidance
 
 ---
 
 ## Step 4: Update dev_context.md
 
-### For PRIMARY task:
+**For different work types, see examples in:** `.ai/templates/DEV_CONTEXT_TEMPLATE.md`
+
+### Quick Updates:
+
+**PRIMARY task:**
 ```markdown
 ## 🎯 Primary Task
 **{Task Name}** - Phase {N} 🚧
@@ -64,7 +76,7 @@ If yes → Add to Task Constants section in dev_context.md
 **Next:** {immediate next step}
 ```
 
-### For LINGERING task:
+**LINGERING task:**
 ```markdown
 ## 🔥 Lingering Tasks
 1. **{Bug/Issue}** - {🔴/🟡/🟢} {✅/🚧}
@@ -73,7 +85,7 @@ If yes → Add to Task Constants section in dev_context.md
    - Next: {what's next}
 ```
 
-### For NEW discovered issue:
+**NEW discovered issue:**
 ```markdown
 ## 🔥 Lingering Tasks
 {N}. **{New Issue}** - 🆕 {priority}
@@ -88,29 +100,26 @@ If yes → Add to Task Constants section in dev_context.md
 
 For non-trivial work, create: `docs/working/{task}_{date}.md`
 
+**Use template:** `.ai/templates/SESSION_ARCHIVE_TEMPLATE.md`
+
+---
+
+## Step 6: Update PROJECT_STATUS.md
+
+Update the Active Work section:
+
 ```markdown
-# {Task/Bug Name} Session
-**Date:** {date}
-**Developer:** {name}
-**Type:** Bug Fix / Investigation / Feature
-
-## What Was Done
-- {item 1}
-- {item 2}
-
-## Files Modified
-- `{path}` - {change}
-
-## Current Status
-{Complete / In Progress / Blocked}
-
-## Next Steps
-- [ ] {next item}
+### {Name} - {Layer/Component}
+- **Branch:** `{branch}`
+- **Status:** {current status}
+- **Last:** {what was just done}
+- **Next:** {what's next}
+- **Lingering:** {count} items
 ```
 
 ---
 
-## Step 6: Check File Size
+## Step 7: Check File Size
 
 | dev_context.md Size | Action |
 |---------------------|--------|
@@ -125,13 +134,14 @@ For non-trivial work, create: `docs/working/{task}_{date}.md`
 
 ---
 
-## Step 7: Confirm Save
+## Step 8: Confirm Save
 
 ```
 ✅ CONTEXT SAVED
 
 Updated:
 - dev_context.md
+- PROJECT_STATUS.md
 - docs/working/{session_doc}.md (if created)
 
 Work type: {Primary/Lingering/New}
@@ -150,7 +160,7 @@ Next: {immediate next step}
 
 ---
 
-## Lingering Task Management
+## Lingering Task Quick Reference
 
 ### Priority Levels
 - 🔴 **Critical** - Blocking work, fix immediately

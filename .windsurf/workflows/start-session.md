@@ -1,3 +1,9 @@
+---
+name: start-session
+description: Initialize session with checkpoint verification, context loading, and task selection. Usage: /start-session
+auto_execution_mode: 0
+---
+
 # Start Session Workflow
 
 Full protocol for initializing a new chat session.
@@ -22,7 +28,8 @@ Full protocol for initializing a new chat session.
 
 Read these files from project root:
 1. `dev_context.md` - Current state, active task, lingering items
-2. `SOLUTION_ARCHITECTURE.md` - Project structure
+2. `PROJECT_STATUS.md` - Project-wide status and overview
+3. `SOLUTION_ARCHITECTURE.md` - Project structure (if exists)
 
 **If Task Constants section exists in dev_context.md:**
 - These are SACRED - do not modify files/signatures listed there

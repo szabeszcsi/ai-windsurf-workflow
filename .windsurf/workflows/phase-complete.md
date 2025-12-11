@@ -1,109 +1,62 @@
-# Phase Complete Workflow
-
-Protocol for completing a phase before committing.
-
+---
+name: phase-complete
+description: Phase completion protocol. Usage: /phase-complete
+auto_execution_mode: 1
 ---
 
-## 🚨 HARD STOP
+# Phase Complete
 
+## 🚨 HARD STOP
 ```
-🚨 STOP - PHASE COMPLETE - DO NOT COMMIT YET
+🚨 STOP - PHASE COMPLETE - CANNOT COMMIT YET
 ```
 
 ---
 
 ## Pre-Check
 
-Before proceeding, verify:
-
-1. **Context check** - Ask user for `/context` result
-2. **Tests passing** - All tests must pass
-3. **Correct branch** - Verify with `git branch --show-current`
-4. **Direct memory** - Am I working from actual session memory? (If checkpoint-only → STOP)
+**Before proceeding, confirm:**
+1. Am I working from direct session memory? (If checkpoint-only → STOP, disclose to user)
+2. Tests passing?
+3. On correct feature branch?
 
 ---
 
-## Required Steps (All Must Complete)
+## Steps (All Required)
 
 | # | Action | Output |
 |---|--------|--------|
-| 1 | Gather info | Component, phase #, developer, description |
-| 2 | Run tests | `pytest` or equivalent → must pass |
+| 1 | Gather info | Component/layer, phase #, developer, description |
+| 2 | Run tests | `pytest tests/unit/ -v` → must pass |
 | 3 | Verify branch | `git branch --show-current` |
 | 4 | Create completion doc | `docs/tasks/{component}_phase{N}_complete.md` |
-| 5 | Create handoff doc | `docs/tasks/{component}_phase{N+1}_handoff.md` |
-| 6 | Update dev_context.md | Current state, Task Constants |
-| 7 | Archive old handoff | Move to `docs/tasks/completed/` |
-| 8 | Git commit & push | Only after steps 4-7 |
-| 9 | Provide new session prompt | Ready-to-paste for next chat |
+| 5 | **Create handoff** 🚨 | `docs/tasks/{component}_phase{N+1}_handoff.md` |
+| 6 | Update dev context | `dev_context.md` (preserve 🔒 Task Constants!) |
+| 7 | Update PROJECT_STATUS | Active Work + Recent Changes |
+| 8 | Archive old handoff | Move to `docs/tasks/completed/` |
+| 9 | Git commit & push | Only after steps 4-8 |
+| 10 | Final report | Provide new chat prompt |
+
+**Step 6 Note:** Keep `🔒 Task Constants` unless this is the FINAL phase. Include constants in handoff doc too.
+
+**For templates and formats:**
+- Completion doc: `.ai/templates/COMPLETION_TEMPLATE.md`
+- Handoff doc: `.ai/templates/HANDOFF_TEMPLATE.md`
+- Phase complete templates: `.ai/templates/PHASE_COMPLETE_TEMPLATE.md`
 
 ---
 
-## Step 4: Completion Doc Template
+## Checklist (All Must Be ✅)
 
-**File:** `docs/tasks/{component}_phase{N}_complete.md`
-
-```markdown
-# {Component} Phase {N} Complete
-
-**Date:** {date}
-**Developer:** {name}
-**Branch:** `{branch}`
-
-## Summary
-{Brief description of what was accomplished}
-
-## Deliverables
-
-| File | Lines | Description |
-|------|-------|-------------|
-| `{path}` | {N} | {description} |
-
-## Test Results
-- {X} tests passing
-- Coverage: {Y}%
-
-## Key Decisions
-- {Decision 1}
-- {Decision 2}
-```
-
----
-
-## Step 5: Handoff Doc
-
-**File:** `docs/tasks/{component}_phase{N+1}_handoff.md`
-
-Use template: `.ai/templates/HANDOFF_TEMPLATE.md`
-
-**Must include:**
-- Current status (what's done)
-- Phase N+1 goals
-- Components to create (with file paths)
-- Implementation steps
-- Success criteria
-- **Task Constants** - copy from dev_context.md!
-
----
-
-## Step 6: Update dev_context.md
-
-```markdown
-## ✅ Recent Completions (Last 3)
-1. ✅ **Phase {N} - {Name}** ({date})
-   - {Component1} ({X} lines, {Y} tests)
-
-## 🎯 Primary Task
-**{Task Name}** - Phase {N+1} 🔜
-See: docs/tasks/{component}_phase{N+1}_handoff.md
-
-## 🌿 Branch
-`{branch}` - pushed
-```
-
-**Task Constants handling:**
-- Non-final phase: Keep constants, copy to handoff
-- Final phase: Archive to completion doc, remove from dev_context.md
+- [ ] Tests passing
+- [ ] Completion doc created
+- [ ] **Handoff doc created** ← Most forgotten! (skip if final phase)
+- [ ] Dev context updated
+- [ ] **🔒 Task Constants preserved** ← Or archived if final phase
+- [ ] PROJECT_STATUS.md updated
+- [ ] Old handoff archived
+- [ ] Git committed and pushed
+- [ ] New chat prompt provided
 
 ---
 
@@ -116,24 +69,10 @@ See: docs/tasks/{component}_phase{N+1}_handoff.md
    ```markdown
    ## 🔒 Task Constants (Archived)
    These were the key invariants for this task:
-   {copy from dev_context.md}
+   {copy from dev context}
    ```
-3. **Remove 🔒 section** from dev_context.md
-4. **Context file should shrink** back to normal size
-
----
-
-## Checklist (All Must Be ✅)
-
-- [ ] Context health checked
-- [ ] Tests passing
-- [ ] Completion doc created
-- [ ] Handoff doc created (unless final phase)
-- [ ] dev_context.md updated
-- [ ] Task Constants preserved (or archived if final)
-- [ ] Old handoff archived
-- [ ] Git committed and pushed
-- [ ] New session prompt provided
+3. **Remove 🔒 section** from dev context (task complete)
+4. **Context file should shrink** back to <1.5 KB
 
 ---
 
@@ -145,14 +84,8 @@ See: docs/tasks/{component}_phase{N+1}_handoff.md
 ✅ Created: docs/tasks/{component}_phase{N}_complete.md
 ✅ Created: docs/tasks/{component}_phase{N+1}_handoff.md
 ✅ Updated: dev_context.md
-✅ Committed and pushed to {branch}
+✅ Updated: PROJECT_STATUS.md
+✅ Committed and pushed
 
 ⚠️ START PHASE {N+1} IN A NEW CHAT
-
-New session prompt:
----
-I'm {name}. Continue {Task} Phase {N+1}.
-Read dev_context.md and docs/tasks/{component}_phase{N+1}_handoff.md
-Branch: {branch}
----
 ```

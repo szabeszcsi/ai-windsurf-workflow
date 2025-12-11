@@ -1,6 +1,14 @@
+---
+name: abort
+description: Emergency abort and rollback. Usage: /abort
+auto_execution_mode: 1
+---
+
 # Abort Workflow
 
 Emergency recovery when things go wrong.
+
+⚠️ **BEFORE EXECUTING THIS:** Tell the user what this will do, and ask for confirmation! Also tell the user what are the requirements for this workflow in order to successfully execute the steps!
 
 ---
 
@@ -17,7 +25,7 @@ Do not make any more changes until recovery path is chosen.
 ## When to Use
 
 - 🔥 Broke something and can't fix it
-- 🔥 Tests failing after multiple attempts  
+- 🔥 Tests failing after multiple attempts
 - 🔥 Wrong branch, wrong files modified
 - 🔥 Context severely degraded
 - 🔥 Need to undo recent changes
@@ -53,29 +61,37 @@ git stash push -m "Recovery stash {date}"
 ```
 Saves current state, can retrieve later with `git stash pop`
 
-### Option C: Reset to Last Commit
+### Option C: Restore from Backup (.bak files)
+```bash
+# If .bak files exist
+ls *.bak
+mv {file}.bak {file}
+```
+Restores from backup files if they were created
+
+### Option D: Reset to Last Commit
 ```bash
 git reset --hard HEAD
 ```
 ⚠️ **Destroys all changes since last commit**
 
-### Option D: Reset to Specific Commit
+### Option E: Reset to Specific Commit
 ```bash
 git log --oneline -10
 git reset --hard {commit-hash}
 ```
 ⚠️ **Destroys all changes since that commit**
 
-### Option E: Selective Restore
+### Option F: Selective Restore
 ```bash
 # Restore specific file
 git checkout HEAD -- path/to/file
 
-# Restore specific directory  
+# Restore specific directory
 git checkout HEAD -- path/to/directory/
 ```
 
-### Option F: Create Recovery Branch
+### Option G: Create Recovery Branch
 ```bash
 git checkout -b recovery/{date}
 ```
@@ -146,6 +162,7 @@ Recommendation: Start fresh chat with /start-session
 | Hard reset to last commit | `git reset --hard HEAD` |
 | See recent commits | `git log --oneline -10` |
 | See what changed | `git diff --stat` |
+| Restore from backup | `mv {file}.bak {file}` |
 
 ---
 
