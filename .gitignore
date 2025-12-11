@@ -1,0 +1,17 @@
+# Archives (optional - uncomment if you don't want to track archives)
+# .windsurf/.archive/
+# .ai/.archive/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temp files
+*.tmp
+*.bak
