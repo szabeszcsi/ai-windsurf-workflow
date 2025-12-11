@@ -1,3 +1,9 @@
+---
+name: phase-failed
+description: Handle phases that are blocked, abandoned, or need restart. Usage: /phase-failed
+auto_execution_mode: 0
+---
+
 # Phase Failed / Abandoned Workflow
 
 Protocol for handling phases that cannot be completed as planned.

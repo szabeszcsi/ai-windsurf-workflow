@@ -1,3 +1,9 @@
+---
+name: generate-architecture
+description: Create or update SOLUTION_ARCHITECTURE.md for a project. Usage: /generate-architecture
+auto_execution_mode: 0
+---
+
 # Generate Architecture Workflow
 
 Create or update SOLUTION_ARCHITECTURE.md for a project.

@@ -1,3 +1,9 @@
+---
+name: agent-review
+description: Trigger code review agent for quality, security, and best practices check. Usage: /agent-review
+auto_execution_mode: 0
+---
+
 # Agent Review Workflow
 
 Specific workflow for triggering the code review agent.

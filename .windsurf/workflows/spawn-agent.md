@@ -1,3 +1,9 @@
+---
+name: spawn-agent
+description: Protocol for invoking and managing specialized sub-agents. Usage: /spawn-agent
+auto_execution_mode: 0
+---
+
 # Spawn Agent Workflow
 
 > **Note:** Native Claude Code subagents (`.claude/agents/`) now auto-invoke based on task context. This workflow is kept for reference.
