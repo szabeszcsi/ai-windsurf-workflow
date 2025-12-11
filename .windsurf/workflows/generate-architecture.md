@@ -232,7 +232,7 @@ Created:
 Next steps:
 1. Review and adjust SOLUTION_ARCHITECTURE.md
 2. Create PROJECT_STATUS.md (optional)
-3. Create dev_context.md from template
+3. Create dev_context.md from `.ai/templates/DEV_CONTEXT_TEMPLATE.md`
 4. Start first task with /plan-task
 ```
 

@@ -165,7 +165,7 @@ class {ComponentName}:
 ## References
 
 - **Pattern:** `{file to follow}`
-- **Architecture:** `SOLUTION_ARCHITECTURE.md`
+- **Architecture:** `docs/{FEATURE}_ARCHITECTURE.md`
 - **Standards:** `.ai/standards/{language}.md`
 - **Previous Phase:** `docs/tasks/{component}_phase{N-1}_complete.md`
 

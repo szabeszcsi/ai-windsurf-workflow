@@ -83,4 +83,5 @@ where python  # Windows
 | Saving progress | Run `/update-context` |
 | Phase complete | Run `/phase-complete` |
 | Context confused | Run `/reload-context` |
+| System unclear | `.ai/AGENT_REFERENCE.md` |
 | Emergency | Run `/abort` |
