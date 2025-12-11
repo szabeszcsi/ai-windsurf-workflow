@@ -78,11 +78,26 @@ PowerBI-Documentation-Suite/
 - `REFERENCE/` - Examples and guides
 
 ### Utility Scripts
-**Location:** `scripts/`  
-**Purpose:** Automation, setup, cleanup  
+**Location:** `scripts/`
+**Purpose:** Automation, setup, cleanup
 **Examples:**
 - `clean_pycache.ps1`
 - `setup_git_hooks.ps1`
+
+### Tech Summaries (Multi-Session Continuity)
+**Location:** `docs/tech-summaries/{layer}/{module}.md`
+**Purpose:** Fast architecture understanding for fresh sessions
+**Structure:**
+- `_index.md` - 1-page project overview
+- `{layer}/` - Per-layer summaries (backend/, api/, frontend/)
+
+**When:** Update after each code modification in multi-layer projects
+**Template:** `.ai/templates/TECH_SUMMARY_TEMPLATE.md`
+
+**Benefits:**
+- Fresh sessions: Read summaries (2KB) vs full source (50KB)
+- Architecture awareness without file exploration
+- 10x faster context loading
 
 ---
 
@@ -113,6 +128,9 @@ PowerBI-Documentation-Suite/
 
 ### Developer Onboarding
 → `docs/ONBOARDING.md`
+
+### Tech Summary (for module/class)
+→ `docs/tech-summaries/{layer}/{module}.md`
 
 ---
 
