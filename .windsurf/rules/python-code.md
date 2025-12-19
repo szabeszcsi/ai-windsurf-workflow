@@ -1,54 +1,71 @@
 ---
 trigger: glob
-globs: ["**/*.py", "!**/test_*.py", "!**/*_test.py", "!**/tests/**/*.py"]
-description: Python coding standards for source files (not tests)
+globs: ["**/*.py"]
+description: Python Development Standards (Source & Test)
 ---
+# Python Master Rule
 
-# Python Code Standards
+**Scope:** Applies to ALL Python files (Source AND Tests).
 
-**Full reference:** `.ai/standards/python.md`
+## 1. THE GOLDEN RULE OF TESTING
+**You are FORBIDDEN from finishing a coding task without running tests.**
+**⚠️ NEVER change working source code just to make tests pass.**
+- **Edit Source** → **Run Test** → **Fix** → **Verify**.
+- If tests don't exist, **CREATE THEM** in `tests/unit/{module}/`.
+- **Target:** 80% coverage minimum.
 
----
+## 2. CONTEXT AWARENESS (Read Before Write)
+Before editing `src/{layer}/{module}.py`:
+1. Check for `docs/tech-summaries/{layer}/{module}.md`.
+2. If it exists, **READ IT**.
+3. If it doesn't exist, read the source file directly AND DISCLOSE to user: tech summary is not complete, recommend: `/generate-tech-summary`
+4. Read `SOLUTION_ARCHITECTURE.md` (if exists)
 
-## File Limits
+## 3. FILE STRUCTURE & LIMITS
+- **Location:** `src/{layer}/{module}.py` (Mirror: `tests/unit/{layer}/test_{module}.py`)
+- **Limits:** Max 500 lines per file (Split if exceeded). Max 50 lines per function.
+- **Imports:**
+  - ✅ Absolute: `from src.common.utils import helper`
+  - ❌ Relative: `from ..utils import helper` (FORBIDDEN in `src/`)
+  - Order: Standard library, third party, project imports
 
-| Metric | Limit |
-|--------|-------|
-| Lines per file | 500 max (650 hard limit) |
-| Lines per function | 50 max |
-| Nesting depth | 4 levels max |
+## 4. CODING STANDARDS (Required Patterns)
 
-**If exceeded:** Split into logical modules.
-
----
-
-## Required Patterns
-
+### Type Hints & Docstrings
 ```python
-# Logging - use project logger or standard
-import logging
-logger = logging.getLogger(__name__)
-
-# Type hints on public methods
 def process(self, data: list[dict]) -> dict[str, Any]:
-    ...
-
-# Docstrings (Google style)
-def calculate(items: list, rate: float) -> float:
-    """Brief description.
-
+    """Brief description (Google Style).
+    
     Args:
-        items: What this parameter is
-        rate: What this parameter is
-
+        data: Input description
     Returns:
-        What gets returned
+        Output description
     """
+    pass
 ```
 
----
+### Logging
+```python
+import logging
+logger = logging.getLogger(__name__)
+# Use logger.info(), logger.error(f"Msg: {e}", exc_info=True)
+```
 
-## Naming Conventions
+### Error Handling
+- ✅ Catch specific exceptions (`ValueError`, `FileNotFoundError`).
+- ✅ Log with `exc_info=True`.
+- ❌ NEVER use bare `except:`.
+
+## 5. TESTING REQUIREMENTS (Strict Gate)
+**When creating or modifying behavior:**
+1. **Create/Update Test:** `tests/unit/{module}/test_{filename}.py` Filename pattern: `{what}_{condition}_{expected}`
+2. **Cover:** Happy path, Edge cases, Error handling.
+3. **Mock:** External services (DB, API) must be mocked.
+4. **Run:** `pytest tests/unit/{module}/ -v`
+
+**Do not skip tests.** Code without tests is incomplete.
+
+## 6. Naming
 
 | Element | Convention | Example |
 |---------|------------|---------|
@@ -56,88 +73,12 @@ def calculate(items: list, rate: float) -> float:
 | Classes | PascalCase | `DataProcessor` |
 | Functions | snake_case | `process_data()` |
 | Constants | UPPER_SNAKE | `MAX_RETRIES` |
-| Private | _prefix | `_internal_method()` |
 
----
-
-## Import Order
-
-```python
-# 1. Standard library
-import os
-from pathlib import Path
-
-# 2. Third-party
-import pandas as pd
-
-# 3. Project imports
-from src.common import utils
-```
-
----
-
-## Error Handling
-
-```python
-# ✅ Specific exceptions with context
-try:
-    result = parse_config(path)
-except FileNotFoundError:
-    logger.error(f"Config not found: {path}")
-    raise
-except json.JSONDecodeError as e:
-    logger.error(f"Invalid JSON in {path}: {e}")
-    raise
-
-# ❌ Never do this
-try:
-    something()
-except:
-    pass
-```
-
----
-
-## Common Pitfalls
-
-```python
-# ❌ Mutable default argument
-def add_item(item, items=[]):
-    items.append(item)
-    return items
-
-# ✅ Use None
-def add_item(item, items=None):
-    if items is None:
-        items = []
-    items.append(item)
-    return items
-```
-
----
-
-## Configuration-Driven Development
-
-```python
-# ✅ Configuration-driven
-config = load_config()
-model = config.get('ai_model', 'default-model')
-timeout = config.get('timeout', 30)
-
-# ❌ Hardcoded
-model = "gpt-4"
-timeout = 30
-```
-
----
-
-## Universal Don'ts
+## 7. Don'ts
 
 | Don't | Do Instead |
 |-------|------------|
-| Hardcode config values | Use config files (YAML, JSON, env) |
-| Hardcode API keys/secrets | Use credentials file or env vars (never commit!) |
-| Skip error handling | Wrap risky operations (API calls, DB, file I/O) |
-| Duplicate code | Check for existing utilities first |
-| Ignore shared modules | Use project's common/ utilities |
-| Commit secrets/logs | Ensure `.gitignore` covers them |
+| Hardcode config | Use config files |
+| Hardcode secrets | Use env vars or credentials file |
+| Skip error handling | Wrap risky operations |
+| Duplicate code | Check existing utilities, sources first |

@@ -6,90 +6,76 @@ auto_execution_mode: 0
 
 # Check Status
 
-Quick health check for current session.
+## 1. Verify Identity
+
+| Item | Value |
+|------|-------|
+| Developer | {name} / ❓ |
+| Context file | {file} |
+| Branch | {branch} / ❓ |
+| Task | {task} / ❓ |
+
+**If any ❓:** Run `/reload-context` or `/start-session`
 
 ---
 
-## Step 1: Verify Identity
+## 2. Session Health
 
-**If `.windsurf/team.md` exists:** Reference it for developer mapping.
+**Message count estimate:**
 
-| Question | Answer |
-|----------|--------|
-| Developer? | {Name} / ❓ Unknown |
-| Context file? | {dev_context_file} |
-| Branch? | {branch} / ❓ Unknown |
-| Current task? | {task} / ❓ Unknown |
+| Count | Status | Action |
+|-------|--------|--------|
+| 1-40 | ✅ Fresh | Continue |
+| 40-60 | ⚠️ Aging | Plan wrap-up |
+| 60+ | 🚨 Risk | Complete current, new chat |
 
-**If ANY ❓** → Run `/reload-context` or `/start-session`
-
----
-
-## Step 2: Assess Context Health
-
-### Conversation Length
-
-Estimate messages in this conversation:
-
-| Messages | Status | Action |
-|----------|--------|--------|
-| 1-40 | ✅ Fresh | Continue freely |
-| 40-60 | ⚠️ Aging | Plan a wrap-up point |
-| 60+ | 🚨 Risk | Complete current item, then new chat |
-
-### Self-Check: Degradation Symptoms
-
-Am I showing any of these? (See core-rules #2)
-
-- [ ] Re-reading files already read this session
-- [ ] Asking questions that were already answered
-- [ ] Putting files in wrong locations
-- [ ] User said "you're confused" or similar
-
-**If ANY checked:** Disclose immediately, recommend saving progress.
+**Degradation symptoms:**
+- Re-reading files already read
+- Asking answered questions
+- Wrong file locations
 
 ---
 
-## Step 3: Generate Report
+## 3. Context Sync Check
+
+Does `dev_context.md` match reality?
+- Current task accurate?
+- Phase number correct?
+- Task Constants up to date?
+
+**If desynced:** Update context file or run `/reload-context`
+
+---
+
+## 4. Report
 
 ```
 📊 STATUS
 
 👤 {Name} | 🌿 {branch}
-💬 Messages: ~{N} | Health: {✅ Fresh / ⚠️ Aging / 🚨 Risk}
+💬 ~{N} messages | {health}
 
-🎯 PRIMARY: {Task} - Phase {N}
-   Progress: {X}% | Current: {what we're doing}
+🎯 PRIMARY: {Task} Phase {N}
+   {X}% | Current: {work}
 
-🔥 LINGERING: {count} items
+🔥 LINGERING: {count}
 
 📈 THIS SESSION:
-   ✅ {completed item}
+   ✅ {completed}
    🚧 {in progress}
 
-💡 RECOMMENDATION: {continue / wrap up soon / new chat needed}
+💾 Context: {Synced/Desynced}
+💡 {recommendation}
 ```
 
 ---
 
-## Step 4: Suggest Next Action
+## 5. Next Action
 
 | Situation | Suggestion |
 |-----------|------------|
-| Fresh, task in progress | Continue working |
-| Fresh, task just completed | `/update-context` to save |
-| Aging, mid-task | Find a stopping point soon |
-| Risk zone (60+) | Save now with `/update-context`, then new chat |
-| Showing symptoms | Acknowledge, save progress, new chat |
-
----
-
-## Quick Actions
-
-| Need | Command |
-|------|---------|
-| Save progress | `/update-context` |
-| Phase done | `/phase-complete` |
-| Lost context | `/reload-context` |
-| Something broke | `/abort` |
-| Start fresh | New chat → `/start-session` |
+| Fresh, working | Continue |
+| Fresh, task done | `/update-context` |
+| Aging, mid-task | Find stopping point |
+| Risk zone | Save now, new chat |
+| Desynced | `/reload-context` |
